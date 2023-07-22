@@ -8,3 +8,5 @@ See these files:
 4. [main.dart](https://github.com/gualse/flutter_android_process_text/blob/main/lib/main.dart)
 
 There are no extra dependencies but you can use a [share_plus](https://pub.dev/packages/share_plus) package instead native implementation. Also, the share button is untranslateable here.
+
+This implementation doesn't support text editing and text is read-only even in TextField
