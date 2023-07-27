@@ -13,7 +13,19 @@ Widget customContextMenuBuilder(
     var value = selection.textInside(editableTextState.textEditingValue.text);
     for (var i = 0; i < items.length; i++) {
       buttonItems.add(ContextMenuButtonItem(
-        onPressed: () => callback(i, value),
+        onPressed: () {
+          editableTextState.hideToolbar();
+          callback(i, value);
+          editableTextState.userUpdateTextEditingValue(
+            TextEditingValue(
+              text: editableTextState.textEditingValue.text,
+              selection: TextSelection.collapsed(
+                offset: editableTextState.textEditingValue.selection.end,
+              ),
+            ),
+            SelectionChangedCause.toolbar,
+          );
+        },
         label: items[i],
       ));
     }
