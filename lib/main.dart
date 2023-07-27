@@ -57,7 +57,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static const channel = MethodChannel('com.example.androidflutterselect/process_text');
+  static const channel =
+      MethodChannel('com.example.androidflutterselect/process_text');
   List<String> _contextMenuItems = [];
 
   @override
@@ -84,8 +85,12 @@ class _MyHomePageState extends State<MyHomePage> {
         context, editableTextState, _contextMenuItems, _contextMenuCallback);
   }
 
-  Future<void> _contextMenuCallback(int index, String value) {
-    return channel.invokeMethod('processTextAction', {'id': index, 'value': value});
+  Future<String?> _contextMenuCallback(int index, String value, bool readonly) {
+    return channel.invokeMethod('processTextAction', {
+      'id': index,
+      'value': value,
+      'readonly': readonly,
+    });
   }
 
   @override

@@ -1,28 +1,39 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 Widget customContextMenuBuilder(
   BuildContext context,
   EditableTextState editableTextState,
   List<String> items,
-  void Function(int index, String value) callback,
+  Future<String?> Function(int index, String value, bool readonly) callback,
 ) {
   var buttonItems = editableTextState.contextMenuButtonItems;
-  var selection = editableTextState.textEditingValue.selection;
+  var textEditingValue = editableTextState.textEditingValue;
+  var selection = textEditingValue.selection;
 
   if (!selection.isCollapsed) {
-    var value = selection.textInside(editableTextState.textEditingValue.text);
+    var value = selection.textInside(textEditingValue.text);
     for (var i = 0; i < items.length; i++) {
       buttonItems.add(ContextMenuButtonItem(
-        onPressed: () {
+        onPressed: () async {
           editableTextState.hideToolbar();
-          callback(i, value);
+          var readOnly = editableTextState.widget.readOnly;
+          var newValue = await callback(i, value, readOnly);
+
+          int offset = max(selection.baseOffset, selection.extentOffset);
+          var newTextEditingValue = textEditingValue.copyWith(
+            selection: TextSelection.collapsed(offset: offset),
+          );
+          if (!readOnly && newValue != null) {
+            newTextEditingValue = newTextEditingValue.replaced(
+              selection,
+              newValue,
+            );
+          }
+
           editableTextState.userUpdateTextEditingValue(
-            TextEditingValue(
-              text: editableTextState.textEditingValue.text,
-              selection: TextSelection.collapsed(
-                offset: editableTextState.textEditingValue.selection.end,
-              ),
-            ),
+            newTextEditingValue,
             SelectionChangedCause.toolbar,
           );
         },
